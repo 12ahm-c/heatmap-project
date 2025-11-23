@@ -1,0 +1,35 @@
+/* MapPageResponsive.css */
+
+/* Filters Panel */
+@media (max-width: 768px) {
+  .filters-panel {
+    width: 90% !important;
+    left: 5% !important;
+    right: 5% !important;
+    top: 70px !important;
+  }
+
+  /* Sidebar */
+  .sidebar-panel {
+    width: 90% !important;
+    left: 5% !important;
+    top: 150px !important;
+  }
+
+  /* Analytics */
+  .analytics-panel {
+    bottom: 10px !important;
+    right: 5% !important;
+    left: 5% !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  /* Search Bar */
+  .search-bar {
+    width: 90% !important;
+    left: 5% !important;
+    transform: translateX(0%) !important;
+  }
+}

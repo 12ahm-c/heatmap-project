@@ -12,9 +12,10 @@ function MapPage() {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-const [showSidebar, setShowSidebar] = useState(!isMobile);
-const [showFilters, setShowFilters] = useState(!isMobile);
-const [showAnalytics, setShowAnalytics] = useState(!isMobile);
+  const [showSidebar, setShowSidebar] = useState(!isMobile);
+  const [showFilters, setShowFilters] = useState(!isMobile);
+  const [showAnalytics, setShowAnalytics] = useState(!isMobile);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const [geoData, setGeoData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
@@ -47,17 +48,17 @@ const [showAnalytics, setShowAnalytics] = useState(!isMobile);
   };
 
   useEffect(() => {
-  const handleResize = () => {
-    const mobile = window.innerWidth < 768;
-    setIsMobile(mobile);
-    setShowSidebar(!mobile);
-    setShowFilters(!mobile);
-    setShowAnalytics(!mobile);
-  };
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setShowSidebar(!mobile);
+      setShowFilters(!mobile);
+      setShowAnalytics(!mobile);
+    };
 
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // =======================================================
   //  📥 Fetch Data from Server
@@ -296,206 +297,249 @@ const [showAnalytics, setShowAnalytics] = useState(!isMobile);
   };
 
   // =======================================================
+  //  📱 Mobile Menu Toggle
+  // =======================================================
+  const toggleMobileMenu = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  // =======================================================
   //  🖥️ Interface
   // =======================================================
   return (
     <div className="map-wrapper">
+      {/* Mobile Menu Button */}
+      {isMobile && (
+        <button 
+          onClick={toggleMobileMenu}
+          style={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            zIndex: 1001,
+            background: 'rgba(255,255,255,0.95)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '50px',
+            height: '50px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+            cursor: 'pointer'
+          }}
+        >
+          ☰
+        </button>
+      )}
 
       {/* Map */}
-<div
-  ref={mapContainer}
-  style={{
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    borderRadius: '12px',
-    boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
-    overflow: 'hidden'
-  }}
-/>
-      {/* Filters */}
-      {(showFilters || !isMobile) && (
-      <div style={{
-  position: 'absolute',
-  top: 20,
-  right: isMobile ? '5%' : '20px',
-  left: isMobile ? '5%' : 'auto',
-  background: 'rgba(255,255,255,0.95)',
-  padding: '20px',
-  borderRadius: '12px',
-  boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-  fontFamily: 'Segoe UI, sans-serif',
-  maxWidth: isMobile ? '90%' : '250px',
-  zIndex: 1000
-}}>
-        <label style={{ fontWeight: 600, color: '#333' }}>Type:</label>
-        <select style={{
-          padding: '8px 12px',
-          borderRadius: '8px',
-          border: '1px solid #ccc',
-          outline: 'none',
-          fontSize: 14
-        }} value={filterType} onChange={e => setFilterType(e.target.value)}>
-          <option value="">All</option>
-          <option value="THEFT">THEFT</option>
-          <option value="BATTERY">BATTERY</option>
-          <option value="NARCOTICS">NARCOTICS</option>
-          <option value="ROBBERY">ROBBERY</option>
-          <option value="CRIMINAL DAMAGE">CRIMINAL DAMAGE</option>
-          <option value="ASSAULT">ASSAULT</option>
-          <option value="MOTOR VEHICLE THEFT">MOTOR VEHICLE THEFT</option>
-        </select>
+      <div
+        ref={mapContainer}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          borderRadius: isMobile ? '0' : '12px',
+          boxShadow: isMobile ? 'none' : '0 8px 25px rgba(0,0,0,0.2)',
+          overflow: 'hidden'
+        }}
+      />
 
-        <label style={{ fontWeight: 600, color: '#333' }}>Year:</label>
-        <select style={{
-          padding: '8px 12px',
-          borderRadius: '8px',
-          border: '1px solid #ccc',
-          outline: 'none',
-          fontSize: 14
-        }} value={filterYear} onChange={e => setFilterYear(e.target.value)}>
-          <option value="">All</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-        </select>
-      </div>
-      )}
-      {/* Search Bar */}
-      <div style={{
+      {/* Filters */}
+{/* Filters */}
+{(showFilters || (isMobile && showMobileMenu)) && (
+  <div style={{
+    position: 'absolute',
+    top: isMobile ? '100px' : '60px', // أسفل البحث مباشرة
+    right: isMobile ? '5%' : '20px', // على اليمين
+    width: isMobile ? '40%' : '180px', // تقليل الحجم
+    background: 'rgba(255,255,255,0.95)',
+    padding: isMobile ? '8px' : '12px',
+    borderRadius: '10px',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    zIndex: 1000
+  }}>
+    <label style={{ fontWeight: 600, fontSize: '12px' }}>Type:</label>
+    <select
+      style={{ padding: '4px', borderRadius: '6px', fontSize: '12px' }}
+      value={filterType} onChange={e => setFilterType(e.target.value)}
+    >
+      <option value="">All</option>
+      <option value="THEFT">THEFT</option>
+      <option value="BATTERY">BATTERY</option>
+      <option value="NARCOTICS">NARCOTICS</option>
+      <option value="ROBBERY">ROBBERY</option>
+      <option value="CRIMINAL DAMAGE">CRIMINAL DAMAGE</option>
+      <option value="ASSAULT">ASSAULT</option>
+      <option value="MOTOR VEHICLE THEFT">MOTOR VEHICLE THEFT</option>
+    </select>
+
+    <label style={{ fontWeight: 600, fontSize: '12px' }}>Year:</label>
+    <select
+      style={{ padding: '4px', borderRadius: '6px', fontSize: '12px' }}
+      value={filterYear} onChange={e => setFilterYear(e.target.value)}
+    >
+      <option value="">All</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+    </select>
+  </div>
+)}
+{/* Search Bar */}
+{/* Search Bar */}
+<div style={{
   position: 'absolute',
-  top: 20,
-  left: '50%',
-  transform: 'translateX(-50%)',
+  top: isMobile ? '10px' : '20px',
+  left: isMobile ? '10px' : '50%',
+  transform: isMobile ? 'none' : 'translateX(-50%)',
   background: 'rgba(255,255,255,0.95)',
   borderRadius: '25px',
-  padding: '5px 15px',
+  padding: '2px 8px',
   display: 'flex',
   alignItems: 'center',
   boxShadow: '0 5px 20px rgba(0,0,0,0.2)',
   fontFamily: 'Segoe UI, sans-serif',
-  width: isMobile ? '90%' : 'auto',
+  width: isMobile ? '80%' : '250px', // تحديد عرض أصغر
+  maxWidth: '250px', // الحد الأقصى للعرض على الشاشة الكبيرة
   zIndex: 1000
 }}>
-        <input
-          type="text"
-          placeholder="Search for area or type..."
-style={{
-  border: 'none',
-  outline: 'none',
-  padding: '8px',
-  borderRadius: '20px',
-  fontSize: 14,
-  width: '100%'
-}}          onChange={e => handleSearch(
-            geoData.features.filter(f =>
-              f.properties.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
-              f.properties.type.toLowerCase().includes(e.target.value.toLowerCase())
-            )
-          )}
-        />
-        <button style={{
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-          marginLeft: '8px',
-          color: '#3498db',
-          fontSize: 16
-        }}>🔍</button>
-      </div>
-
-      {/* Sidebar */}
-      {(showSidebar || !isMobile) && (
-      <div style={{
-        position: 'absolute',
-        left: 20,
-        top: 20,
-        width: '280px',
-        background: 'rgba(255,255,255,0.95)',
-        borderRadius: '12px',
-        padding: '15px',
-        boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
-        fontFamily: 'Segoe UI, sans-serif',
-        color: '#333',
-        
-      }}>
-        <h3 style={{ marginBottom: '10px' }}>Statistics</h3>
-        <p><strong>Total Points:</strong> {totalPoints}</p>
-        <p><strong>Most Active Area:</strong> {topArea}</p>
-        <button 
-          onClick={zoomToTopArea}
-          style={{
-            marginTop: '10px',
-            padding: '8px 12px',
-            borderRadius: '8px',
-            border: 'none',
-            background: '#3498db',
-            color: '#fff',
-            cursor: 'pointer',
-            fontWeight: 600
-          }}
-        >Zoom</button>
-      </div>
-      )}
+  <input
+    type="text"
+    placeholder="Search..."
+    style={{
+      border: 'none',
+      outline: 'none',
+      padding: '4px 6px',
+      borderRadius: '20px',
+      fontSize: isMobile ? '12px' : '13px',
+      width: '100%'
+    }}
+    onChange={e => handleSearch(
+      geoData.features.filter(f =>
+        f.properties.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+        f.properties.type.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+    )}
+  />
+  <button style={{
+    border: 'none',
+    background: 'transparent',
+    cursor: 'pointer',
+    marginLeft: '4px',
+    color: '#3498db',
+    fontSize: isMobile ? '12px' : '14px'
+  }}>🔍</button>
+</div>
+{/* Sidebar */}
+{(showSidebar || (isMobile && showMobileMenu)) && (
+  <div style={{
+    position: 'absolute',
+    top: isMobile ? '100px' : '60px', // أسفل البحث مباشرة
+    left: isMobile ? '5%' : '20px', // على اليسار
+    width: isMobile ? '40%' : '180px', // تقليل الحجم
+    background: 'rgba(255,255,255,0.95)',
+    padding: isMobile ? '8px' : '12px',
+    borderRadius: '10px',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    zIndex: 1000,
+    color: 'black'
+  }}>
+    <h3 style={{ margin: 0, fontSize: '13px' }}>Statistics</h3>
+    <p style={{ fontSize: '12px' }}><strong>Total Points:</strong> {totalPoints}</p>
+    <p style={{ fontSize: '12px' }}><strong>Most Active Area:</strong> {topArea}</p>
+    <button 
+      onClick={zoomToTopArea}
+      style={{
+        marginTop: '6px',
+        padding: '4px',
+        borderRadius: '6px',
+        border: 'none',
+        background: '#3498db',
+        color: '#fff',
+        cursor: 'pointer',
+        fontSize: '12px'
+      }}
+    >Zoom</button>
+  </div>
+)}
       {/* Analytics */}
-      
-      <div style={{
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        fontFamily: 'Segoe UI, sans-serif',
-alignItems: isMobile ? 'center' : 'flex-start',
-      }}>
-        {/* Incidents by Type */}
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '10px'
-        }}>
-          {Object.keys(typeCounts).map(type => (
-            <div key={type} style={{
-              background: '#fff',
-              padding: '10px 15px',
-              borderRadius: '10px',
-              boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-              minWidth: '120px',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontWeight: 'bold', color: '#e74c3c' }}>{typeCounts[type]}</div>
-              <div style={{ fontSize: '12px', color: '#555' }}>{type}</div>
-            </div>
-          ))}
-        </div>
+      {(showAnalytics || (isMobile && showMobileMenu)) && (
+<div style={{
+  position: 'absolute',
+  bottom: isMobile ? '20px' : '20px',
+  right: isMobile ? '5%' : '20px',
+  left: isMobile ? '5%' : 'auto',
+  fontFamily: 'Segoe UI, sans-serif',
+  zIndex: 1000,
+  maxHeight: isMobile ? '150px' : '200px',  // تحديد ارتفاع ثابت
+  overflowY: 'auto',  // تمكين التمرير عند تعدي العدد
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+  background: 'rgba(255,255,255,0.95)',
+  borderRadius: '12px',
+  padding: '10px',
+  boxShadow: '0 8px 25px rgba(0,0,0,0.2)'
+}}>
 
-        {/* Incidents by Year */}
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '10px',
-          marginTop: '10px'
-        }}>
-          {Object.keys(yearCounts).map(year => (
-            <div key={year} style={{
-              background: '#fff',
-              padding: '10px 15px',
-              borderRadius: '10px',
-              boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-              minWidth: '80px',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontWeight: 'bold', color: '#3498db' }}>{yearCounts[year]}</div>
-              <div style={{ fontSize: '12px', color: '#555' }}>{year}</div>
-            </div>
-          ))}
-        </div>
+  {/* Incidents by Type */}
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(60px, 1fr))',
+    gap: '6px',
+    justifyContent: 'center'
+  }}>
+    {Object.keys(typeCounts).map(type => (
+      <div key={type} style={{
+        background: '#fff',
+        padding: '4px 6px',
+        borderRadius: '6px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+        minWidth: '50px',
+        textAlign: 'center',
+        fontSize: '10px'
+      }}>
+        <div style={{ fontWeight: 'bold', color: '#e74c3c', fontSize: '11px' }}>{typeCounts[type]}</div>
+        <div style={{ fontSize: '10px', color: '#555' }}>{type}</div>
       </div>
+    ))}
+  </div>
+
+  {/* Incidents by Year */}
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(50px, 1fr))',
+    gap: '4px',
+    justifyContent: 'center',
+    marginTop: '6px'
+  }}>
+    {Object.keys(yearCounts).map(year => (
+      <div key={year} style={{
+        background: '#fff',
+        padding: '3px 5px',
+        borderRadius: '6px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+        minWidth: '40px',
+        textAlign: 'center',
+        fontSize: '10px'
+      }}>
+        <div style={{ fontWeight: 'bold', color: '#3498db', fontSize: '11px' }}>{yearCounts[year]}</div>
+        <div style={{ fontSize: '10px', color: '#555' }}>{year}</div>
+      </div>
+    ))}
+  </div>
+</div>
+      )}
 
       {/* Tooltip */}
       <Tooltip
@@ -508,41 +552,43 @@ alignItems: isMobile ? 'center' : 'flex-start',
           padding: '10px 15px',
           borderRadius: '10px',
           boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-          fontSize: 14,
+          fontSize: isMobile ? '12px' : '14px',
           pointerEvents: 'none',
           transition: 'all 0.2s ease',
-          zIndex: 1000
-
+          zIndex: 1000,
+          maxWidth: isMobile ? '200px' : 'none'
         }}
         x={tooltip.x} y={tooltip.y} content={tooltip.content}
       />
 
       {/* Layers Panel */}
-      {map && (
+      {map && (showMobileMenu || !isMobile) && (
         <div style={{
           position: 'absolute',
-          top: 280,
-          right: 20,
+          top: isMobile ? '320px' : '280px',
+          right: isMobile ? '5%' : '20px',
+          left: isMobile ? '5%' : 'auto',
           background: 'rgba(255,255,255,0.95)',
           borderRadius: '12px',
-          padding: '15px',
+          padding: isMobile ? '12px' : '15px',
           boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
           fontFamily: 'Segoe UI, sans-serif',
           color: '#333',
           display: 'flex',
           flexDirection: 'column',
-          gap: '10px',
+          gap: isMobile ? '8px' : '10px',
           zIndex: 1000
         }}>
-          <h4 style={{ margin: 0, marginBottom: '10px' }}>Layers</h4>
+          <h4 style={{ margin: 0, marginBottom: isMobile ? '8px' : '10px', fontSize: isMobile ? '14px' : 'inherit' }}>Layers</h4>
 
           <button style={{
-            padding: '8px 12px',
+            padding: isMobile ? '6px 10px' : '8px 12px',
             borderRadius: '8px',
             border: 'none',
             background: '#3498db',
             color: '#fff',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: isMobile ? '12px' : 'inherit'
           }}
             onClick={() => {
               if (map.getLayer('heatmap-layer')) {
@@ -555,12 +601,13 @@ alignItems: isMobile ? 'center' : 'flex-start',
           </button>
 
           <button style={{
-            padding: '8px 12px',
+            padding: isMobile ? '6px 10px' : '8px 12px',
             borderRadius: '8px',
             border: 'none',
             background: '#e67e22',
             color: '#fff',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: isMobile ? '12px' : 'inherit'
           }}
             onClick={() => {
               if (map.getLayer('points-symbol')) {
@@ -573,12 +620,13 @@ alignItems: isMobile ? 'center' : 'flex-start',
           </button>
 
           <button style={{
-            padding: '8px 12px',
+            padding: isMobile ? '6px 10px' : '8px 12px',
             borderRadius: '8px',
             border: 'none',
             background: '#2ecc71',
             color: '#fff',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: isMobile ? '12px' : 'inherit'
           }}
             onClick={() => map.flyTo({ center: [-87.623177, 41.881832], zoom: 11 })}
           >
