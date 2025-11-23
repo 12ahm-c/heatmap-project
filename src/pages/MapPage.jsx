@@ -451,7 +451,6 @@ style={{
         flexDirection: 'column',
         gap: '12px',
         fontFamily: 'Segoe UI, sans-serif',
-        flexDirection: isMobile ? 'column' : 'row',
 alignItems: isMobile ? 'center' : 'flex-start',
       }}>
         {/* Incidents by Type */}
